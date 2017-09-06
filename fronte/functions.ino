@@ -6,6 +6,28 @@ void init_MPU(){
   Wire.endTransmission(true);
   delay(1000);
 }
+
+String dataMPU(){
+
+  FunctionsMPU(); // Acquisisco assi AcX, AcY, AcZ.
+  Roll = FunctionsPitchRoll(AcX, AcY, AcZ);   //Calcolo angolo Roll
+  Pitch = FunctionsPitchRoll(AcY, AcX, AcZ);  //Calcolo angolo Pitch
+
+  int ServoRoll = map(Roll, -90, 90, 0, 179);
+  int ServoPitch = map(Pitch, -90, 90, 179, 0);
+
+  Serial.println();
+
+  Serial.print("Pitch: "); Serial.print(Pitch);
+  Serial.print("\t");
+  Serial.print("Roll: "); Serial.print(Roll);
+  Serial.print("\n");
+  String data = "{" + String(ServoRoll) + "," + String(ServoPitch) + "}";
+ 
+  return data;
+
+}
+
  
 //Funzione per il calcolo degli angoli Pitch e Roll
 double FunctionsPitchRoll(double A, double B, double C){

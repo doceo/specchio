@@ -32,22 +32,6 @@ void setup() {
 void loop() {
   
   // put your main code here, to run repeatedly:
-  FunctionsMPU(); // Acquisisco assi AcX, AcY, AcZ.
-    
-  Roll = FunctionsPitchRoll(AcX, AcY, AcZ);   //Calcolo angolo Roll
-  Pitch = FunctionsPitchRoll(AcY, AcX, AcZ);  //Calcolo angolo Pitch
-
-  int ServoRoll = map(Roll, -90, 90, 0, 179);
-  int ServoPitch = map(Pitch, -90, 90, 179, 0);
-
-  Serial.println();
-
-  Serial.print("Pitch: "); Serial.print(Pitch);
-  Serial.print("\t");
-  Serial.print("Roll: "); Serial.print(Roll);
-  Serial.print("\n");
-
-  String data = "{" + String(ServoRoll) + "," + String(ServoPitch) + "}";
   
   WiFiClient client = server.available();   // listen for incoming clients
 
@@ -57,6 +41,9 @@ void loop() {
         if(client.available()){
           char c = client.read();             // read a byte, then
           if (c=='\n'){
+
+            String data = dataMPU();
+            
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
             client.println("HTTP/1.1 200 OK");

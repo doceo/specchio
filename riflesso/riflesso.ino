@@ -26,8 +26,9 @@ Servo serX;
 Servo serY;
 
 int X, angX;
+int oldX = 0;
 int Y, angY;
-
+int oldY = 0;
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
 byte mac[] = {
@@ -40,7 +41,7 @@ IPAddress myDns(1, 1, 1, 1);
 EthernetClient client;
 
 //char server[] = "diomede-rasp.local";
-IPAddress server(192,168,1,68);
+IPAddress server(192,168,1,82);
 
 unsigned long lastConnectionTime = 0;             // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
@@ -54,7 +55,7 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   
   }
-  delay(1000);
+  delay(500);
   // start the Ethernet connection using a fixed IP address and DNS server:
   Ethernet.begin(mac, ip, myDns);
   // print the Ethernet board/shield's IP address:
@@ -76,7 +77,7 @@ String varGet;
 int valX, valY;
 
 
-    delay(1000);
+    delay(500);
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
@@ -86,23 +87,31 @@ int valX, valY;
  //   Serial.print(c);
   }
   Serial.println();
-  Serial.println(varGet);
+ // Serial.println(varGet);
   
   valX=estraX(varGet);
   valY=estraY(varGet);
   
-  Serial.print(valX + " ");
-  Serial.println(valY);
-  avviaServo();
+//  Serial.print(valX + " ");
+//  Serial.println(valY);
 
-    serX.write(valX);              // tell servo to go to position in variable 'pos'
-    serY.write(valY);              // tell servo to go to position in variable 'pos'
+    if(valX!=0){
+        
+        if ((abs(valX-oldX)>2)||((abs(valY-oldY)>2))){
+          avviaServo();
+          serX.write(valX);              // tell servo to go to position in variable 'pos'
+          serY.write(valY);
+          delay(150);    
+          spegniServo();
+          oldX = valX;
+          oldY = valY;
+
+        }
+        
+    }
 
 //    serY.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(150);    
-  
-  spegniServo();
-  
+
   httpRequest();
 
 }

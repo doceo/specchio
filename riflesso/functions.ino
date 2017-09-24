@@ -58,6 +58,7 @@ int estraX (String str){
   strX=str.substring(openGraf+1,coma);
  
   valX = strX.toInt();
+  Serial.println(valX);
   return valX;
  
 }
@@ -72,8 +73,10 @@ int estraY (String str){
   coma = str.lastIndexOf(',');
  
   strY=str.substring(coma+1,closeGraf);
-
+  
   valY = strY.toInt();
+
+  Serial.println(valY);
   return valY;
  
 }

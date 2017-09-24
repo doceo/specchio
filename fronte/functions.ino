@@ -22,7 +22,13 @@ String dataMPU(){
   Serial.print("\t");
   Serial.print("Roll: "); Serial.print(Roll);
   Serial.print("\n");
-  String data = "{" + String(ServoRoll) + "," + String(ServoPitch) + "}";
+  Serial.print("X: "); Serial.print(AcX);
+  Serial.print("\t");
+  Serial.print("Y: "); Serial.print(AcY);
+  Serial.print("\n");
+  Serial.print("Z: "); Serial.print(AcZ);
+  Serial.print("\n");
+  String data = "{" + String(ServoPitch) + "," + String(ServoRoll) + "}";
  
   return data;
 
@@ -43,7 +49,7 @@ double FunctionsPitchRoll(double A, double B, double C){
 }
  
 //Funzione per l'acquisizione degli assi X,Y,Z del MPU6050
-void FunctionsMPU(){
+void FunctionsMPU(){  
   Wire.beginTransmission(MPU);
   Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
   Wire.endTransmission(false);

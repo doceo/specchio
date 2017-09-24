@@ -48,7 +48,7 @@ void loop() {
   WiFiClient client = server.available();   // listen for incoming clients
 
   if (client){
-      Serial.println("new client");           // print a message out the serial port
+//      Serial.println("new client");           // print a message out the serial port
       if (client.connected()){
         if(client.available()){
           char c = client.read();             // read a byte, then

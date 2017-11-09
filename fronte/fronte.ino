@@ -1,12 +1,14 @@
 #include <SPI.h>
 #include <Wire.h>
-#include <WiFi101.h>
+//#include <WiFi101.h>
 #include <ESP8266WiFi.h>
 
 #define MPU 0x68  // I2C address of the MPU-6050
 
-char ssid[] = "makappa";      //  your network SSID (name)
-char pass[] = "";   // your network password
+//definisco le costanti che determinano la connessione. Bisogna sostituire l'indirizzo IP della macchina a cui collegarsi.
+
+const char* MY_SSID = "";
+const char* MY_PWD = "";
 int keyIndex = 0;                 // your network key Index number (needed only for WEP)
  
 
@@ -22,24 +24,26 @@ void setup() {
   Serial.begin(9600);
   init_MPU(); // Inizializzazione MPU6050
 
-   if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present");
-    while (true);       // don't continue
-   printWiFiStatus();
+  connectWiFi();
 
-  }
+//   if (WiFi.status() == WL_NO_SHIELD) {
+//    Serial.println("WiFi shield not present");
+//    while (true);       // don't continue
+//   printWiFiStatus();
+//
+//  }
     // attempt to connect to WiFi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to Network named: ");
-    Serial.println(ssid);                   // print the network name (SSID);
-
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
+//  while ( status != WL_CONNECTED) {
+//    Serial.print("Attempting to connect to Network named: ");
+//    Serial.println(ssid);                   // print the network name (SSID);
+//
+//    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
+//    status = WiFi.begin(ssid, pass);
+//    // wait 10 seconds for connection:
+//    delay(10000);
+//  }
   server.begin();                           // start the web server on port 80
-  printWiFiStatus();                        // you're connected now, so print out the status
+//  printWiFiStatus();                        // you're connected now, so print out the status
 
 }
 

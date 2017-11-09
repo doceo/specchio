@@ -1,12 +1,14 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <WiFi101.h>
+#include <ESP8266WiFi.h>
+
 #define MPU 0x68  // I2C address of the MPU-6050
 
 char ssid[] = "makappa";      //  your network SSID (name)
-char pass[] = "liberdiom";   // your network password
+char pass[] = "";   // your network password
 int keyIndex = 0;                 // your network key Index number (needed only for WEP)
-
+ 
 
 double AcX,AcY,AcZ;
 int Pitch, Roll;

@@ -21,6 +21,7 @@
 #include <Servo.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <EthernetUdp.h>         // UDP library from: bjoern@cs.stanford.edu 12/30/2008
 
 Servo serX;
 Servo serY;
@@ -37,24 +38,22 @@ byte mac[] = {
 IPAddress ip(192, 168, 1, 177);
 IPAddress myDns(1, 1, 1, 1);
 
+unsigned int localPort = 8888;      // local port to listen on
 
-EthernetClient client;
+// buffers for receiving and sending data
+char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
+char  ReplyBuffer[] = "acknowledged";       // a string to send back
 
-//char server[] = "diomede-rasp.local";
-IPAddress server(192,168,1,82);
+// An EthernetUDP instance to let us send and receive packets over UDP
+EthernetUDP Udp;
 
 unsigned long lastConnectionTime = 0;             // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 10L * 1000L; // delay between updates, in milliseconds
 // the "L" is needed to use long type numbers
 
 void setup() {
-  // Open serial communications and wait for port to open:
   Serial.begin(9600);
- 
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  
-  }
+
   delay(500);
   // start the Ethernet connection using a fixed IP address and DNS server:
   Ethernet.begin(mac, ip, myDns);
@@ -76,18 +75,48 @@ char c;
 String varGet;
 int valX, valY;
 
+  int packetSize = Udp.parsePacket();
+  if (packetSize)
+  {
+    Serial.print("Received packet of size ");
+    Serial.println(packetSize);
+    Serial.print("From ");
+    IPAddress remote = Udp.remoteIP();
+    for (int i = 0; i < 4; i++)
+    {
+      Serial.print(remote[i], DEC);
+      if (i < 3)
+      {
+        Serial.print(".");
+      }
+    }
+    Serial.print(", port ");
+    Serial.println(Udp.remotePort());
 
-    delay(500);
+    // read the packet into packetBufffer
+    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+    Serial.println("Contents:");
+    Serial.println(packetBuffer);
+    
+    varGet = String(packetBuffer);
+    
+    // send a reply, to the IP address and port that sent us the packet we received
+    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+    Udp.write(ReplyBuffer);
+    Udp.endPacket();
+  }
+  delay(10);
+
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  while (client.available()) {
-    c = client.read(); 
-    varGet  += c;
- //   Serial.print(c);
-  }
-  Serial.println();
- // Serial.println(varGet);
+//  while (client.available()) {
+//    c = client.read(); 
+//    varGet  += c;
+// //   Serial.print(c);
+//  }
+//  Serial.println();
+// // Serial.println(varGet);
   
   valX=estraX(varGet);
   valY=estraY(varGet);
@@ -97,7 +126,7 @@ int valX, valY;
 
     if(valX!=0){
         
-        if ((abs(valX-oldX)>2)||((abs(valY-oldY)>2))){
+        if ((abs(valX-oldX)>1)||((abs(valY-oldY)>1))){
           avviaServo();
           serX.write(valX);              // tell servo to go to position in variable 'pos'
           serY.write(valY);
@@ -109,10 +138,6 @@ int valX, valY;
         }
         
     }
-
-//    serY.write(pos);              // tell servo to go to position in variable 'pos'
-
-  httpRequest();
 
 }
 
